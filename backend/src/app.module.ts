@@ -6,7 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { UsersController } from './users/users.controller';
+import { UsersModule } from './users/users.module';
 import * as joi from 'joi';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -40,13 +43,15 @@ import * as joi from 'joi';
         password: configService.get<string>('DB_PASSWORD'),
 
         database: configService.get<string>('DB_DATABASE'),
+        entities: [User],
         autoLoadEntities: true,
-
-        synchronize: false,
+        logging: true,
+        synchronize: true,
       }),
     }),
     HealthModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
