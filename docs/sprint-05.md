@@ -1,193 +1,174 @@
-Sprint 05
+# Sprint 05
 
-Goal
+## Goal
 
 Build the Authentication System for the Meeting Room Reservation backend.
 
-Completed
+---
 
-Created Auth Module.
+## Completed
 
-Created Auth Controller.
+- Created Auth Module.
+- Created Auth Controller.
+- Created Auth Service.
+- Created CheckEmailDto.
+- Created RegisterDto.
+- Created VerifyOtpDto.
+- Created LoginDto.
+- Implemented Check Email flow.
+- Implemented Register flow.
+- Added Password Hashing with bcrypt.
+- Added OTP Generation.
+- Added OTP Expiration.
+- Stored OTP in database.
+- Implemented Email Verification.
+- Implemented Resend OTP.
+- Created Mail Module.
+- Created Mail Service.
+- Configured SMTP with Nodemailer.
+- Sent OTP to user email.
+- Implemented Login flow.
+- Compared passwords with bcrypt.
+- Configured JWT.
+- Generated Access Token.
+- Created AuthGuard.
+- Verified JWT inside protected routes.
+- Added authenticated user payload to request.
 
-Created Auth Service.
+---
 
-Created CheckEmailDto.
+## Concepts Learned
 
-Created RegisterDto.
-
-Created VerifyOtpDto.
-
-Created LoginDto.
-
-Implemented Check Email flow.
-
-Implemented Register flow.
-
-Added Password Hashing with bcrypt.
-
-Added OTP Generation.
-
-Added OTP Expiration.
-
-Stored OTP in database.
-
-Implemented Email Verification.
-
-Implemented Resend OTP.
-
-Created Mail Module.
-
-Created Mail Service.
-
-Configured SMTP with Nodemailer.
-
-Sent OTP to user email.
-
-Implemented Login flow.
-
-Compared passwords with bcrypt.
-
-Configured JWT.
-
-Generated Access Token.
-
-Created AuthGuard.
-
-Verified JWT inside protected routes.
-
-Added authenticated user payload to request.
-
-Concepts Learned
-
-Authentication
+### Authentication
 
 Authentication is the process of verifying who the user is.
 
-The current authentication flow uses:
+Current authentication flow uses:
 
-Email
+- Email
+- Password
+- OTP
+- JWT
 
-Password
+---
 
-OTP
-
-JWT
-
-Check Email
+### Check Email
 
 Checks whether a user already exists.
 
-Possible results:
+Possible actions:
 
-register
-
-verify-email
-
-login
+- register
+- verify-email
+- login
 
 Example:
 
+```ts
 if (!user) {
-return {
-exists: false,
-action: 'register',
-};
+  return {
+    exists: false,
+    action: "register",
+  };
 }
 
 if (!user.isEmailVerified) {
-return {
-exists: true,
-action: 'verify-email',
-};
+  return {
+    exists: true,
+    action: "verify-email",
+  };
 }
 
 return {
-exists: true,
-action: 'login',
+  exists: true,
+  action: "login",
 };
+```
 
-Password Hashing
+---
+
+### Password Hashing
 
 Passwords are not stored as plain text.
 
 bcrypt hashes the password before saving it.
 
-const hashedPassword = await bcrypt.hash(
-dto.password,
-10,
-);
+```ts
+const hashedPassword = await bcrypt.hash(dto.password, 10);
+```
 
-Password Comparison
+---
+
+### Password Comparison
 
 During login, the entered password is compared with the stored hash.
 
-const isPasswordValid = await bcrypt.compare(
-dto.password,
-user.password,
-);
+```ts
+const isPasswordValid = await bcrypt.compare(dto.password, user.password);
+```
 
-OTP
+---
+
+### OTP
 
 OTP is used to verify the user's email.
 
 A six-digit OTP is generated.
 
+```ts
 private generateOtp(): string {
-return randomInt(
-100000,
-1000000,
-).toString();
+  return randomInt(
+    100000,
+    1000000,
+  ).toString();
 }
+```
 
-OTP Expiration
+---
 
-OTP is valid for a limited time.
+### OTP Expiration
 
-Current expiration time:
+OTP is valid for 5 minutes.
 
-5 minutes.
+```ts
+const otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
+```
 
-const otpExpiredAt = new Date(
-Date.now() + 5 _ 60 _ 1000,
-);
+---
 
-Email Verification
-
-After receiving the OTP, the user sends it back to the backend.
+### Email Verification
 
 The backend checks:
 
-User exists.
-
-OTP is correct.
-
-OTP is not expired.
+- User exists.
+- OTP is correct.
+- OTP is not expired.
 
 If valid:
 
+```ts
 user.isEmailVerified = true;
 user.otp = null;
 user.otpExpiredAt = null;
+```
 
-Resend OTP
+---
+
+### Resend OTP
 
 Used when the user registered before but did not complete email verification.
 
-A new OTP is generated.
+A new OTP is generated and replaces the old OTP.
 
-The old OTP is replaced.
+---
 
-The new OTP receives a new expiration time.
-
-Mail Service
+### Mail Service
 
 Responsible for sending emails.
 
 Uses Nodemailer and SMTP.
 
-Architecture:
-
+```text
 AuthService
 ↓
 MailService
@@ -197,89 +178,109 @@ Nodemailer
 SMTP Server
 ↓
 User Email
+```
 
-JWT
+---
+
+### JWT
 
 JWT is generated after successful login.
 
-Payload contains user identity information.
+Payload example:
 
-Example:
-
+```ts
 const payload = {
-sub: user.id,
-email: user.email,
-role: user.role,
+  sub: user.id,
+  email: user.email,
+  role: user.role,
 };
+```
 
 Token generation:
 
-const accessToken =
-await this.jwtService.signAsync(payload);
+```ts
+const accessToken = await this.jwtService.signAsync(payload);
+```
 
-AuthGuard
+---
+
+### AuthGuard
 
 Protects private routes.
 
 It reads the JWT from:
 
+```http
 Authorization: Bearer TOKEN
+```
 
 Then verifies it.
 
 If valid:
 
-request['user'] = payload;
+```ts
+request["user"] = payload;
+```
 
 If invalid:
 
+```http
 401 Unauthorized
+```
 
-AuthenticatedRequest
+---
 
-Express does not know about request.user by default.
+### AuthenticatedRequest
 
-A custom Type was created:
+Express does not know about `request.user` by default.
 
+```ts
 export type AuthenticatedRequest = Request & {
-user: JwtPayload;
+  user: JwtPayload;
 };
+```
 
 This tells TypeScript that authenticated requests contain a user payload.
 
-Architecture
+---
 
+## Architecture
+
+```text
                 CHECK EMAIL
                      ↓
         ┌────────────┴────────────┐
         ↓                         ↓
      REGISTER                   LOGIN
         ↓                         ↓
+ Password Hash              findByEmail
+        ↓                         ↓
+ Generate OTP              Email verified?
+        ↓                         ↓
+ Save User                 bcrypt.compare
+        ↓                         ↓
+ Send Email                    JWT
+        ↓                         ↓
+ Verify OTP                Access Token
+        ↓                         ↓
+isEmailVerified=true       Frontend
+                                  ↓
+                       Authorization: Bearer JWT
+                                  ↓
+                             AuthGuard
+                                  ↓
+                          verifyAsync()
+                                  ↓
+                           request.user
+                                  ↓
+                         Protected Route
+```
 
-Password Hash findByEmail
-↓ ↓
-Generate OTP Email verified?
-↓ ↓
-Save User bcrypt.compare
-↓ ↓
-Send Email JWT
-↓ ↓
-Verify OTP Access Token
-↓ ↓
-isEmailVerified=true Frontend
-↓
-Authorization: Bearer JWT
-↓
-AuthGuard
-↓
-verifyAsync()
-↓
-request.user
-↓
-Protected Route
+---
 
-Service Architecture
+## Service Architecture
 
+```text
 Client
 
 ↓
@@ -301,103 +302,116 @@ Repository
 ↓
 
 PostgreSQL
+```
 
-API Created
+---
 
-Check Email
+## API Created
 
+### Check Email
+
+```http
 POST /auth/check-email
+```
 
 Checks whether the user should:
 
-Register
+- Register
+- Verify Email
+- Login
 
-Verify Email
+---
 
-Login
+### Register
 
-Register
-
+```http
 POST /auth/register
+```
 
 Creates a new user.
 
 Also:
 
-Hashes password.
+- Hashes password.
+- Generates OTP.
+- Sets OTP expiration.
+- Saves user.
+- Sends OTP email.
 
-Generates OTP.
+---
 
-Sets OTP expiration.
+### Verify OTP
 
-Saves user.
-
-Sends OTP email.
-
-Verify OTP
-
+```http
 POST /auth/verifyotp
+```
 
 Verifies the OTP and confirms the user's email.
 
-Resend OTP
+---
 
+### Resend OTP
+
+```http
 POST /auth/resendotp
+```
 
 Generates and sends a new OTP.
 
-Login
+---
 
+### Login
+
+```http
 POST /auth/login
+```
 
 Checks:
 
-User exists.
-
-Email is verified.
-
-Password is correct.
+- User exists.
+- Email is verified.
+- Password is correct.
 
 Returns a JWT Access Token.
 
-Protected Route Example
+---
 
+### Protected Route Example
+
+```http
 GET /users/me
+```
 
 Requires:
 
+```http
 Authorization: Bearer TOKEN
+```
 
 Returns the authenticated user payload.
 
-Important Notes
+---
 
-Controllers should not contain authentication business logic.
+## Important Notes
 
-AuthService is responsible for authentication decisions.
+- Controllers should not contain authentication business logic.
+- AuthService is responsible for authentication decisions.
+- UsersService is responsible for user database operations.
+- MailService is responsible for sending emails.
+- Passwords must never be stored as plain text.
+- OTP should expire after a limited time.
+- OTP should be cleared after successful verification.
+- JWT_SECRET must not be written directly inside source code.
+- Protected routes should use AuthGuard.
+- User identity should come from verified JWT data, not from a userId sent by the client.
+- Register and Login routes should not require AuthGuard.
+- Integration testing is still pending.
 
-UsersService is responsible for user database operations.
+---
 
-MailService is responsible for sending emails.
+## Authentication Flow
 
-Passwords must never be stored as plain text.
-
-OTP should expire after a limited time.
-
-OTP should be cleared after successful verification.
-
-JWT_SECRET must not be written directly inside source code.
-
-Protected routes should use AuthGuard.
-
-User identity should come from verified JWT data, not from a userId sent by the client.
-
-Register and Login routes should not require AuthGuard.
-
-Integration testing is still pending.
-
-Authentication Flow
-
+```text
 Check Email
 ↓
 User not found
@@ -416,21 +430,19 @@ User exists and verified
 → Compare Password
 → Generate JWT
 → Access Protected Routes
+```
 
-Next Sprint
+---
+
+## Next Sprint
 
 Authorization and Core Features
 
 Possible next tasks:
 
-Current User helper / decorator.
-
-Role-based authorization.
-
-Admin Guard.
-
-Rooms Module.
-
-Reservation flow.
-
-Protect private APIs with JWT.
+- Current User helper / decorator.
+- Role-based authorization.
+- Admin Guard.
+- Rooms Module.
+- Reservation flow.
+- Protect private APIs with JWT.
