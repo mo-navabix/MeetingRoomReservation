@@ -26,6 +26,22 @@ import { User } from './users/entities/user.entity';
         DB_USERNAME: joi.string().required(),
         DB_PASSWORD: joi.string().required(),
         DB_DATABASE: joi.string().required(),
+
+        MAIL_HOST: joi.string().required(),
+
+        MAIL_PORT: joi.number().integer().default(587),
+
+        MAIL_SECURE: joi.boolean().default(false),
+
+        MAIL_USER: joi.string().required(),
+
+        MAIL_PASSWORD: joi.string().required(),
+
+        MAIL_FROM: joi.string().required(),
+
+        JWT_SECRET: joi.string().required(),
+
+        JWT_EXPIRES_IN: joi.string().default('1d'),
       }),
     }),
 

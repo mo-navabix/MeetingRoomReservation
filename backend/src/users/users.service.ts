@@ -17,14 +17,27 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { email } });
   }
 
-  async create(name: string, family: string, email: string, password: string) {
+  async create(
+    name: string,
+    family: string,
+    email: string,
+    password: string,
+    otp: string,
+    otpExpiredAt: Date,
+  ) {
     const user = await this.userRepository.create({
       name,
       family,
       email,
       password,
+      otp,
+      otpExpiredAt,
     });
 
+    return this.userRepository.save(user);
+  }
+
+  async save(user: User): Promise<User> {
     return this.userRepository.save(user);
   }
 }
