@@ -35,8 +35,8 @@ export class User extends BaseEntity {
   isEmailVerified: boolean;
 
   @Column({ nullable: true })
-  otp: string;
+  otp: string | null;
 
   @Column({ nullable: true })
-  otpExpiredAt: Date;
+  otpExpiredAt: Date | null;
 }

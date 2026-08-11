@@ -24,7 +24,7 @@ export class MailService {
   async sendOtp(email: string, otp: string) {
     return this.transporter.sendMail({
       from: this.configService.get<string>('MAIL_FROM'),
-      to: emil,
+      to: email,
       subject: 'Your OTP Code',
       text: `Your OTP code is: ${otp}`,
       html: `

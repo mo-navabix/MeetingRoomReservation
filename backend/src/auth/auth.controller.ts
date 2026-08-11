@@ -5,7 +5,8 @@ import { RegisterDto } from './dto/register.dto';
 import { verifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
-import type { AuthenticatedRequest } from './types/authenticated-request.type';
+import { CurrentUser } from '../common/entities/decorators/current-user.decorator';
+import { JwtPayload } from './types/jwt-payload.type';
 
 @Controller('auth')
 export class AuthController {
@@ -13,8 +14,8 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(AuthGuard)
-  getMe(@Req() request: AuthenticatedRequest) {
-    return request.user;
+  getMe(@CurrentUser() user: JwtPayload) {
+    return user;
   }
 
   @Post('check-email')
