@@ -6,7 +6,7 @@ import { verifyOtpDto } from './dto/verify-otp.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
 import { CurrentUser } from '../common/entities/decorators/current-user.decorator';
-import { JwtPayload } from './types/jwt-payload.type';
+import type { JwtPayload } from './types/jwt-payload.type';
 
 @Controller('auth')
 export class AuthController {
