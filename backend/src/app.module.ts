@@ -10,6 +10,7 @@ import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import * as joi from 'joi';
 import { User } from './users/entities/user.entity';
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { User } from './users/entities/user.entity';
     HealthModule,
     AuthModule,
     UsersModule,
+    RoomsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

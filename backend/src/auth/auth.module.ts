@@ -12,7 +12,7 @@ import { MailModule } from 'src/mail/mail.module';
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-
+      global: true,
       inject: [ConfigService],
 
       useFactory: (configService: ConfigService) => ({

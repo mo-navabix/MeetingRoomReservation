@@ -9,6 +9,7 @@ import { BadRequestException } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -110,7 +111,7 @@ export class AuthService {
       throw new BadRequestException('User not found');
     }
 
-    if (!user.isEmailVerified) {
+    if (user.isEmailVerified) {
       throw new BadRequestException('Email already verified');
     }
 
@@ -120,7 +121,10 @@ export class AuthService {
     user.otp = otp;
     user.otpExpiredAt = otpExpiredAt;
     await this.userservice.save(user);
-    await this.mailservice.sendOtp(email, otp);
+    // await this.mailservice.sendOtp(email, otp);
+    console.log(`\n================================`);
+    console.log(`Generated OTP for ${user.email}: ${otp}`);
+    console.log(`================================\n`);
 
     return {
       success: true,
