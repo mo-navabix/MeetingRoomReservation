@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import * as joi from 'joi';
 import { User } from './users/entities/user.entity';
 import { RoomsModule } from './rooms/rooms.module';
+import { AuthorizationModule } from './authorization/authorization.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { RoomsModule } from './rooms/rooms.module';
     AuthModule,
     UsersModule,
     RoomsModule,
+    AuthorizationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

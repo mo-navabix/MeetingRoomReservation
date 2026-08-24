@@ -9,7 +9,7 @@ import { BadRequestException } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/users/entities/user.entity';
+import { AuthorizationService } from 'src/authorization/authorization.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +17,7 @@ export class AuthService {
     private readonly userservice: UsersService,
     private readonly mailservice: MailService,
     private readonly jwtservice: JwtService,
+    private readonly authorizationService: AuthorizationService,
   ) {}
   async checkEmail(dto: CheckEmailDto) {
     const user = await this.userservice.findByEmail(dto.email);
@@ -59,7 +60,7 @@ export class AuthService {
     const otp = this.generateOtp();
     const otpExpiredAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    await this.userservice.create(
+    const user = await this.userservice.create(
       dto.name,
       dto.family,
       dto.email,
@@ -67,6 +68,8 @@ export class AuthService {
       otp,
       otpExpiredAt,
     );
+
+    await this.authorizationService.assignDefaultRoleToUser(user.id);
 
     await this.mailservice.sendOtp(dto.email, otp);
 
@@ -143,7 +146,7 @@ export class AuthService {
       throw new BadRequestException('Email not verified');
     }
 
-    const ispasswordvalid = bcrypt.compare(dto.password, user.password);
+    const ispasswordvalid = await bcrypt.compare(dto.password, user.password);
 
     if (!ispasswordvalid) {
       throw new BadRequestException('Invalid password');
@@ -152,7 +155,6 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
     };
 
     const accessToken = await this.jwtservice.signAsync(payload);

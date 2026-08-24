@@ -1,12 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { UserRole } from '../enum/user-role.enum';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { Role } from '../../authorization/entities/role.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -23,13 +17,6 @@ export class User extends BaseEntity {
   password: string;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
-  })
-  role: UserRole;
-
-  @Column({
     default: false,
   })
   isEmailVerified: boolean;
@@ -39,4 +26,12 @@ export class User extends BaseEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   otpExpiredAt: Date | null;
+
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
+  roles: Role[];
 }
