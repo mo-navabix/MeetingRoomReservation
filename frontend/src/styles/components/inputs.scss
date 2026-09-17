@@ -1,0 +1,18 @@
+.form-input {
+  @apply w-full
+  h-12
+  rounded-xl
+  px-4
+  outline-none
+  transition;
+
+  background: var(--color-surface-card);
+
+  border: 1px solid var(--color-border);
+
+  color: var(--color-text-primary);
+
+  &:focus {
+    border-color: var(--color-secondary);
+  }
+}

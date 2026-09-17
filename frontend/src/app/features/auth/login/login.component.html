@@ -1,0 +1,91 @@
+<div class="min-h-screen flex items-center justify-center bg-[var(--color-background)] p-4">
+  <div
+    class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl"
+  >
+    <!-- Banner -->
+
+    <section
+      class="hidden md:flex flex-col justify-center items-center p-12 bg-gradient-to-br from-[#0D1B3A] to-[#2563EB] text-white"
+    >
+      <img src="assets/logo.png" alt="دیدار" class="w-36 mb-8" />
+
+      <h1 class="text-5xl font-bold mb-4">دیدار</h1>
+
+      <p class="text-lg text-center text-slate-200">سامانه هوشمند رزرو اتاق جلسات</p>
+
+      <img
+        src="assets/images/meeting-room.jpg"
+        class="w-full h-56 object-cover rounded-2xl mt-10"
+      />
+
+      <div class="mt-8 space-y-4 text-sm text-slate-200">
+        <div class="flex gap-3">
+          <span> ✓ </span>
+          <span> مدیریت هوشمند جلسات </span>
+        </div>
+
+        <div class="flex gap-3">
+          <span> ✓ </span>
+          <span> رزرو سریع اتاق‌ها </span>
+        </div>
+
+        <div class="flex gap-3">
+          <span> ✓ </span>
+          <span> مشاهده وضعیت لحظه‌ای </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form -->
+
+    <section class="flex items-center justify-center p-6 md:p-12">
+      <div class="w-full max-w-md">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-[var(--color-text-primary)]">ورود به حساب</h2>
+
+          <p class="mt-2 text-[var(--color-text-secondary)]">خوش آمدید، اطلاعات خود را وارد کنید</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-5">
+          <div>
+            <label class="form-label"> ایمیل </label>
+
+            <input
+              pInputText
+              type="email"
+              formControlName="email"
+              class="form-input"
+              placeholder="example@email.com"
+            />
+          </div>
+
+          <div>
+            <label class="form-label"> رمز عبور </label>
+
+            <input
+              pInputText
+              type="password"
+              formControlName="password"
+              class="form-input"
+              placeholder="رمز عبور"
+            />
+          </div>
+
+          @if (errorMessage) {
+            <div class="rounded-xl bg-red-500/10 text-red-400 p-3">
+              {{ errorMessage }}
+            </div>
+          }
+
+          <p-button label="ورود" type="submit" [loading]="isLoading" styleClass="w-full"></p-button>
+
+          <div class="text-center mt-6 text-sm text-slate-400">
+            حساب کاربری ندارید؟
+
+            <a routerLink="/auth/register" class="text-[#14B8A6] font-medium"> ثبت نام </a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
